@@ -1,0 +1,9 @@
+{
+	"name": "xray-web-scrape",
+	"version": "0.0.1",
+	"description": "Scrape le web",
+	"main": "scrape.js",
+	"dependencies": {
+		"x-ray": "latest"
+	}
+}
