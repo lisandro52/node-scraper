@@ -37,3 +37,6 @@ typings
 bower_components
 #Bower libs: install them from command line
 libs
+
+#Ignore my output testing files
+output.json
