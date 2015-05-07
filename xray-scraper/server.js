@@ -1,15 +1,12 @@
 var express = require('express');
 var async = require('async');
-var gameronScrape = require('./models/gameron-scrape');
+var gameronScrape = require('./models/scrapers/gameron-scrape');
+var categories = require('./models/sites/categories');
 
 var app = express();
 
 app.get('/', function(req, res) {
-	
-	//var jsonResult = 'defoltExpress';
-	//jsonResult = gameronScrape.getAsyncScrapeFromUrl('http://www.gameron.com.ar/index.php?id_category=33&controller=category');
-	//console.log(jsonResult);
-	
+	/*
 	async.series([
 		function(callback) {
 			gameronScrape.getScrapeFromUrl(
@@ -21,6 +18,31 @@ app.get('/', function(req, res) {
 	function callback(err, result) {
 		res.send(result);
 	});
+	*/
+	
+	var asyncCalls = [];
+	
+	categories.forEach(function(item) {
+		asyncCalls.push(function(callback) {
+			gameronScrape.getScrapeFromUrl(
+				item.link,
+				item.category,
+				callback
+			);
+		});
+	});
+	
+	console.log('categories ' + categories);
+	console.log('asyncCalls ' + asyncCalls);
+	
+	async.parallel(
+		asyncCalls,
+		function callback(err, results) {
+			if(err) throw err;
+			console.log(results);
+			res.send(results);
+		}
+	);
 	
 });
 
