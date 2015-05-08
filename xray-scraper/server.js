@@ -1,6 +1,6 @@
 var express = require('express');
 var async = require('async');
-var gameronScrape = require('./models/scrapers/gameron-scrape');
+var gameronScrape = require('./models/scrapers/gameron-scraper');
 var categories = require('./models/sites/categories');
 
 var app = express();
@@ -32,15 +32,12 @@ app.get('/', function(req, res) {
 		});
 	});
 	
-	console.log('categories ' + categories);
-	console.log('asyncCalls ' + asyncCalls);
-	
 	async.parallel(
 		asyncCalls,
 		function callback(err, results) {
 			if(err) throw err;
-			console.log(results);
-			res.send(results);
+			//console.log(results);
+			res.json(results);
 		}
 	);
 	
