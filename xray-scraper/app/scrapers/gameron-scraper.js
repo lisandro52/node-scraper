@@ -5,17 +5,6 @@ var genericScraper = require('./generic-scraper');
 var Scrape = function () {};
 
 Scrape.prototype.saveScrapeToFile = function (url, outputFile) {
-	
-	/*xray(url)
-		.prepare(prepare)
-		.select([{
-			$root: '.p-item',
-			itemName: '.s_title_block a[title]',
-			link: '.s_title_block a[href]',
-			description: '.product_desc a[title] | lineBreakClean',
-			price: '.price'
-		}])
-		.write(outputFile);*/
 		
 	genericScraper.saveScrapeToFile(
 		url,

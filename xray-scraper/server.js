@@ -1,45 +1,19 @@
 var express = require('express');
+var getter  = require('./app/routes/products-getter');
 var async = require('async');
-var gameronScrape = require('./models/scrapers/gameron-scraper');
-var categories = require('./models/sites/categories');
 
 var app = express();
 
 app.get('/', function(req, res) {
-	/*
+	
 	async.series([
-		function(callback) {
-			gameronScrape.getScrapeFromUrl(
-				'http://www.gameron.com.ar/index.php?id_category=33&controller=category',
-				callback
-			);
-		}
-	],
-	function callback(err, result) {
-		res.send(result);
+		function(callbackServer){
+			getter.getProductsFromSites(callbackServer);
+		}],		
+		function callbackServer(err, results) {
+			res.send(results);
 	});
-	*/
-	
-	var asyncCalls = [];
-	
-	categories.forEach(function(item) {
-		asyncCalls.push(function(callback) {
-			gameronScrape.getScrapeFromUrl(
-				item.link,
-				item.category,
-				callback
-			);
-		});
-	});
-	
-	async.parallel(
-		asyncCalls,
-		function callback(err, results) {
-			if(err) throw err;
-			//console.log(results);
-			res.json(results);
-		}
-	);
+	//res.send(getter.getProductsFromSites());
 	
 });
 
