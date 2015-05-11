@@ -15,19 +15,19 @@ angular.module('configService', [])
 		return $http.get('/config');
 	};
 	
-	//create a user
-	configFactory.create = function(userData) {
-		return $http.post('/config/', userData);
+	//create a parameter
+	configFactory.create = function(configData) {
+		return $http.post('/config/', configData);
 	};
 	
-	//update a usesr
+	//update a parameter
 	configFactory.update = function(id, configData) {
 		return $http.put('/config/' + id, configData);
 	};
 	
-	//delete a user
+	//delete a parameter
 	configFactory.delete = function(id) {
-		return $http.delete('/api/users/' + id);
+		return $http.delete('/config/' + id);
 	};
 	
 	return configFactory;

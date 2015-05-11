@@ -45,7 +45,22 @@ angular.module('configCtrl', ['configService'])
 		vm.modified = false;
 	};
 	
+	vm.createNewParameter = function() {
+		//Creates a new parameter, and updates the config model with the new list of configs
+		Config.create(vm.parameterData)
+			.success(function(incomingConfigs) {
+				vm.configs = incomingConfigs;
+			});
+	};
 	
+	vm.deleteParameter = function(parameterName) {
+		Config.delete(parameterName)
+			.success(function(incomingConfigs) {
+				vm.configs = incomingConfigs;
+			});
+	};
+	
+
 });
 
 //controller applied to user creation page

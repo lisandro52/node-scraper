@@ -80,6 +80,35 @@ app.put('/config/:config_id', function(req, res) {
 	
 });
 
+app.post('/config', function(req, res) {
+	
+	var config = new Config();	
+	config.parameter = req.body.parameterName;
+	config.valueList = [];
+	
+	config.save(function(err) {
+		if (err) res.send(err);
+		//After inserting the new parameter, return all the configs
+		Config.find(function (err, configs) {
+	        if (err) res.send(err); 
+	        res.json(configs);
+	    });
+	});
+});
+
+app.delete('/config/:config_id', function(req, res) {
+	Config.remove({
+		_id: req.params.config_id
+	}, function(err) {
+		//After removing the config, if there isn't an error, return all the configs again
+		if(err) res.send(err);
+		Config.find(function (err, configs) {
+			if(err) res.send(err);
+			res.json(configs);
+		});
+	});
+});
+
 // Main catch-all route
 // Send users to frontend
 // has to be registered after API ROUTES
