@@ -31,7 +31,7 @@
 			<td class="col-sm-6">
 				<div ng-repeat="it in item.valueList">
 					<div class="form-group">
-						<input type="text" ng-model="it.value" ng-change="config.modifiedInput()"/>
+						<input type="text" ng-model="it.value" ng-enter="config.addNewValue(item._id)" ng-change="config.modifiedInput()"/>
 						<button type="button" class="btn btn-danger btn-xs" ng-show="$last" ng-click="config.removeValue(item._id)"><span class="glyphicon glyphicon-remove"/></button>
 					</div>
 				</div>
