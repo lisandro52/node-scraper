@@ -8,6 +8,8 @@ angular.module('configCtrl', ['configService'])
 	
 	var vm = this;
 	
+	vm.modified = false;
+	
 	//grab all the configs at page load
 	Config.all()
 		.success(function(incomingConfig) {
@@ -15,10 +17,15 @@ angular.module('configCtrl', ['configService'])
 			vm.configs = incomingConfig;
 		});
 	
+	vm.modifiedInput = function(){
+		vm.modified = true;
+	};
+	
 	vm.addNewValue = function(itemId) {
 		vm.configs.filter(function(x) { 
 			return x._id == itemId; 
 		})[0].valueList.push({ value: "" });
+		vm.modified = true;
 	};
 	
 	vm.removeValue = function(itemId) {		
@@ -28,14 +35,14 @@ angular.module('configCtrl', ['configService'])
 			})[0];
 			
 		config.valueList.splice(-1, 1);
+		vm.modified = true;
 	};
 	
-	vm.updateConfig = function(configId) {
-		Config.update(configId,
-			vm.configs.filter(function(x) {
-				return x._id == configId;
-			})[0]
-		);
+	vm.updateConfig = function() {
+		vm.configs.forEach(function(config, index, array) {
+			Config.update(config._id, config);
+		});
+		vm.modified = false;
 	};
 	
 	
