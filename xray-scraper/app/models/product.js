@@ -7,8 +7,8 @@ var productSchema = new Schema({
 	partNumber: String,
 	link: String,
 	name: String,
-	tags: [String],
-	compatibleTags: [String],
+	mainType: { type: String, index: true},
+	compatibilityTags: { type: [String], index: true},
 	stores: [{
 		id: { type: Schema.Types.ObjectId, ref: 'Store'},
 		price: Number,
