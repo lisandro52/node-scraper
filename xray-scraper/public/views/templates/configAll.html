@@ -1,0 +1,44 @@
+<div class="page-header">
+	<h1>
+		Config
+		<a href="/config/create" class="btn btn-default">
+			<span class="glyphicon glyphicon-plus"></span>
+			New parameter
+		</a>
+	</h1>
+	
+</div>
+
+<!-- Loading message -->
+<div class="jumbotron text-center" ng-show="config.processing">
+	<span class="glyphicon glyphicon-repeat spinner"></span>
+	<p>Loading Configuration...</p>
+</div>
+
+<table class="table table-bordered table-striped" ng-show="config.configs">
+	<thead>
+		<tr>
+			<th>Parameter</th>
+			<th class="col-sm-6">Values</th>
+		</tr>
+	</thead>
+	<tbody>
+		
+		<tr ng-repeat="item in config.configs">
+			<td><h4>{{ item.parameter }}</h4></td>
+			<td class="col-sm-6">
+				<div ng-repeat="it in item.valueList">
+					<div class="form-group">
+						<input type="text" ng-model="it.value"/>
+						<button type="button" class="btn btn-danger btn-xs" ng-show="$last" ng-click="config.removeValue(item._id)"><span class="glyphicon glyphicon-remove"/></button>
+					</div>
+				</div>
+				<div class="form-group">
+					<button type="button" class="btn btn-success btn-sm" ng-click="config.addNewValue(item._id)">Add new value</button>
+					<button type="button" class="btn btn-primary btn-xs" ng-click="config.updateConfig(item._id)">Update config</button>
+				</div>
+			</td>
+		</tr>
+		
+	</tbody>
+</table>
