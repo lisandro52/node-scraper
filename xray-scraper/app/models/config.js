@@ -9,5 +9,48 @@ var configSchema = new Schema({
 	}]
 });
 
-module.exports = mongoose.model('Config', configSchema);
+var db = mongoose.model('Config', configSchema);
+
+var ConfigRepo = function () {};
+
+ConfigRepo.prototype.getAllConfigs = function(callback) {
+	db.find()
+	.sort({ parameter: 'asc' })
+	.exec(function(err, configs) {
+		callback(err, configs);
+	});
+};
+
+
+ConfigRepo.prototype.createConfig = function(parameterName, callback) {
+	var config = new db();
+	config.parameter = parameterName;
+	config.valueList = [];
+	
+	config.save(function(err) {
+		callback(err);
+	});
+	
+};
+
+ConfigRepo.prototype.updateConfig = function (config_id, valueList, callback) {
+	
+	db.findById(config_id, function(err, config) {
+		if (err) throw err;
+		
+		config.valueList = valueList;
+		config.markModified('valueList');
+		config.save(function(err) {
+			callback(err);
+		});
+	});
+};
+
+ConfigRepo.prototype.removeConfig = function(config_id, callback) {
+	db.remove({ _id: config_id }, function(err) {
+		callback(err);
+	});
+};
+
+module.exports = new ConfigRepo();
 
