@@ -5,95 +5,72 @@ module.exports = function (app, express) {
     //get an instance of the express router
     var apiRouter = express.Router();
 
+    //on routes that end in /config
+    apiRouter.route('/')
 
-    //on routes that end in /users
-    apiRouter.route('/config')
-
-        .post(function (req, res) {
+        .post(function (req, res) {           
+            var config = new Config();	
+            config.parameter = req.body.parameterName;
+            config.valueList = [];
             
-            /*//create a new instance of the Config model
-            var config = new Config();
-        
-            //set the users information (comes from the request)
-        
-            user.name = req.body.name;
-            user.username = req.body.username;
-            user.password = req.body.password;
-            user.save(function (err) {
-                if (err) {
-                    //duplicate entry
-                    if (err.code == 11000)
-                        return res.json({ success: false, message: 'A user with that username already existe' });
-                    else
-                        return res.send(err);
-                }
-    
-                res.json({ message: 'User created!' });
-            });
-            */
+            config.save(function(err) {
+            	if (err) res.send(err);
+            	//After inserting the new parameter, return all the configs
+            	Config.find()
+				.sort({ parameter : 'asc' })
+				.exec(function (err, configs) {
+                    if (err) res.send(err); 
+                    res.json(configs);
+                });
+            }); 
+           
         })
         
-        .get(function (req, res) {
-            /*User.find(function (err, users) {
-                if (err) res.send(err);
+        .get(function (req, res) {            
+            Config.find()
+			.sort({ parameter : 'asc' })
+			.exec(function (err, config) {
+                if (err) res.send(err);            
+                res.json(config);
+            });
             
-                //return the users
-                res.json(users);
-            });*/
-            
-            
-            
-    });
+	});
 
-    /*
-    //on routes that end in /users/:user_id
-    apiRouter.route('/users/:user_id')
-
-    //get the user with that id
-    // accessed at GET
-        .get(function (req, res) {
-
-        User.findById(req.params.user_id, function (err, user) {
-            if (err) res.send(err);
-        
-            //return the user
-            res.json(user);
-        });
-
-    })
+    
+    //on routes that end in /config/:config_id
+    apiRouter.route('/:config_id')
 
         .put(function (req, res) {
+        	Config.findById(req.params.config_id, function(err, config) {
+        		
+        		if (err) res.send(err);
+        		
+        		//update the config info
+        		config.valueList = req.body.valueList;
+        		
+        		config.markModified('valueList');
+        		config.save(function(err) {
+        			if (err) res.send(err);
+        			res.json({ success: true, message: 'Updated config' });
+        		});
+        	});
+    	})
 
-        User.findById(req.params.user_id, function (err, user) {
-
-            if (err) res.send(err);
-        
-            //upadte the users info only if its new
-            if (req.body.name) user.name = req.body.name;
-            if (req.body.username) user.username = req.body.username;
-            if (req.body.password) user.password = req.body.password;
-        
-            //save the user
-            user.save(function (err) {
-                if (err) res.send(err);
-            
-                //return a message
-                res.json({ message: 'User updated!' });
-            });
-        });
-    })
-
-        .delete(function (req, res) {
-        User.remove({
-            _id: req.params.user_id
-        }, function (err, user) {
-                if (err) return res.send(err);
-
-                res.json({ message: 'Successfully deleted' });
-            });
-
+        .delete(function (req, res) {			
+            Config.remove({
+        		_id: req.params.config_id
+        	}, function(err) {
+        		//After removing the config, if there isn't an error, return all the configs again
+        		if(err) res.send(err);
+        		Config.find()
+				.sort({ parameter : 'asc' })
+				.exec(function (err, configs) {
+        			if(err) res.send(err);
+        			res.json(configs);
+        		});
+        	});
     });
-    */
+    
     return apiRouter;
 
 };

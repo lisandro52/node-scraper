@@ -5,6 +5,7 @@ var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var morgan = require('morgan');
 var Config = require('./app/models/config');
+
 var path = require('path');
 
 
@@ -17,10 +18,10 @@ app.use(bodyParser.json());
 
 //configura our app to handle CORS requests
 app.use(function (req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,Authorization');
-    next();
+	res.setHeader('Access-Control-Allow-Origin', '*');
+	res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
+	res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,Authorization');
+	next();
 });
 
 //Connect to local mongo database
@@ -33,81 +34,8 @@ app.use(morgan('dev'));
 // used for requests that our frontend will make
 app.use(express.static(__dirname + '/public'));
 
-app.get('/config', function(req, res) {
-	
-	console.log('entering the /config');
-	
-	/*var tagsConfig = new Config();
-	
-	tagsConfig.parameter = 'typeTags';
-	tagsConfig.valueList = [
-		{ value: "Motherboard"}, 
-		{ value: "RAM"}, 
-		{value:"CPU"}, 
-		{value:"VGA"}, 
-		{value:"Case"}, 
-		{value:"SSD"}, 
-		{value:"Optical drive"}
-	];
-	
-	tagsConfig.save();
-	*/
-	Config.find(function (err, config) {
-        if (err) res.send(err);
-    
-        res.json(config);
-    });
-	
-});
-
-app.put('/config/:config_id', function(req, res) {
-	
-	console.log('Calling the put method in /config/:config_id');
-	
-	Config.findById(req.params.config_id, function(err, config) {
-		
-		if (err) res.send(err);
-		
-		//update the config info
-		config.valueList = req.body.valueList;
-		
-		config.markModified('valueList');
-		config.save(function(err) {
-			if (err) res.send(err);
-			res.json({ success: true, message: 'Updated config' });
-		});
-	});
-	
-});
-
-app.post('/config', function(req, res) {
-	
-	var config = new Config();	
-	config.parameter = req.body.parameterName;
-	config.valueList = [];
-	
-	config.save(function(err) {
-		if (err) res.send(err);
-		//After inserting the new parameter, return all the configs
-		Config.find(function (err, configs) {
-	        if (err) res.send(err); 
-	        res.json(configs);
-	    });
-	});
-});
-
-app.delete('/config/:config_id', function(req, res) {
-	Config.remove({
-		_id: req.params.config_id
-	}, function(err) {
-		//After removing the config, if there isn't an error, return all the configs again
-		if(err) res.send(err);
-		Config.find(function (err, configs) {
-			if(err) res.send(err);
-			res.json(configs);
-		});
-	});
-});
+var configRoutes = require('./app/routes/config-routes')(app, express);
+app.use('/config', configRoutes);
 
 // Main catch-all route
 // Send users to frontend
