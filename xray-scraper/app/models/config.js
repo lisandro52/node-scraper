@@ -1,5 +1,7 @@
 var mongoose = require('mongoose'),
 	Schema = mongoose.Schema;
+var regex = require('node-regexp');
+
 
 var configSchema = new Schema({
 	
@@ -21,6 +23,22 @@ ConfigRepo.prototype.getAllConfigs = function(callback) {
 	});
 };
 
+ConfigRepo.prototype.getAllConfigsLike = function(search_param, callback) {
+	
+	var re = regex()
+			.must(search_param)
+			.ignoreCase()
+			.toRegExp();
+	console.log(re);
+	db.find().or([
+		{ parameter : re },
+		{ "valueList.value" : re}
+	])
+	.exec(function(err, configs){
+		callback(err, configs);
+	});
+};
+
 
 ConfigRepo.prototype.createConfig = function(parameterName, callback) {
 	var config = new db();
@@ -34,10 +52,8 @@ ConfigRepo.prototype.createConfig = function(parameterName, callback) {
 };
 
 ConfigRepo.prototype.updateConfig = function (config_id, valueList, callback) {
-	
 	db.findById(config_id, function(err, config) {
-		if (err) throw err;
-		
+		if(err) callback(err);
 		config.valueList = valueList;
 		config.markModified('valueList');
 		config.save(function(err) {

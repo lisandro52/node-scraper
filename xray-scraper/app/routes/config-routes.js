@@ -47,6 +47,17 @@ module.exports = function (app, express) {
 				});
 			});
     });
+	
+	//testing GET route for search
+	//GET: /search/qwerty
+	apiRouter.route('/search/:search_param')
+	.get(function(req,res) {
+		console.log(req.params.search_param);
+		configRepo.getAllConfigsLike(req.params.search_param, function(err, configs) {
+			if (err) res.send(err);
+			res.json(configs);
+		});	
+	});
     
     return apiRouter;
 
