@@ -6,6 +6,6 @@ var storeSchema = new Schema({
 	associatedTags: [String]	
 });
 
-var Store = mongoose.model('Store', storeSchema);
+//var Store = mongoose.model('Store', storeSchema);
 
 module.exports = mongoose.model('Store', storeSchema);
