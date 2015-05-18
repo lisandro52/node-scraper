@@ -44,18 +44,25 @@ ProductsRepo.prototype.createProduct = function(partNumber, link, name, maintTyp
 	});
 };
 
-ProductsRepo.prototype.updateProduct = function(prod_id, partNumber, link, name, maintType, compatibilityTags, stores, callback) {
+ProductsRepo.prototype.updateProduct = function(prod_id, partNumber, link, name, mainType, compatibilityTags, stores, callback) {
 	db.findById(prod_id, function(err, prod) {
 		if(err) callback(err);
 		
-		prod.partNumber = partNumber;
-		prod.link = link;
-		prod.name = name;
-		prod.mainType = maintType;
-		prod.compatibilityTags = compatibilityTags;
-		prod.stores = stores;
-		prod.markModified('compatibilityTags');
-		prod.markModified('stores');
+		if (partNumber) prod.partNumber = partNumber;
+		if (link) prod.link = link;
+		if (name) prod.name = name;
+		if (mainType) prod.mainType = mainType;
+		
+		if (compatibilityTags){
+			prod.compatibilityTags = compatibilityTags;
+			prod.markModified('compatibilityTags');
+		}
+		 
+		if (stores) {
+			prod.stores = stores;
+			prod.markModified('stores');
+		}
+		
 		prod.save(function(err) {
 			callback(err);
 		});
